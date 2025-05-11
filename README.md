@@ -3,6 +3,7 @@ This project is a Functional UI Test Automation Framework built using Playwright
 
 ## Key Features/Functionalities/Capabilities:
 
-![image](https://github.com/user-attachments/assets/5cb8b12a-c7f2-4d9a-b69f-a626b5224060)
+![image](https://github.com/user-attachments/assets/7e9ffc73-8208-406a-bacb-03dccb194065)
+
 
 This framework is designed to accelerate the development and execution of UI tests, ensuring high test coverage and reliability for web applications.
