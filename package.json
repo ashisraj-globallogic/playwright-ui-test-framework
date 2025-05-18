@@ -1,5 +1,5 @@
 {
-  "name": "natwest-ui-test-framework",
+  "name": "playwright-ui-test-framework",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -42,6 +42,7 @@
     "lint-staged": "^15.5.1",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
+    "monocart-reporter": "^2.9.18",
     "nodemailer": "^6.10.1",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
@@ -52,15 +53,21 @@
   },
   "scripts": {
     "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:sanity": "playwright test --grep @sanity",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:ui:debug": "playwright test --ui --debug",
-    "posttest": "echo 'Generating Allure Report...' && npm run allure:generate && echo 'Opening Allure Report...' && npm run allure:open",
+    "posttest": "npx monocart show-report artifacts/reports/monocart-report/index.html",
+    "posttest-allure-disabled": "echo 'Generating Allure Report...' && npm run allure:generate && echo 'Opening Allure Report...' && npm run allure:open",
     "allure:generate": "allure generate --single-file artifacts/reports/allure-results --clean -o artifacts/reports/allure-report",
     "allure:open": "allure open artifacts/reports/allure-report",
     "lint": "eslint . --no-cache",
     "format": "prettier --write */**/*.ts */**/*.json --ignore-pattern ../../.prettierignore",
     "syntax-check": "tsc --noEmit",
-    "notify-report": "ts-node ./src/utils/notifications.ts --env qa --email True"
+    "notify-report:qa": "ts-node ./src/utils/notifications.ts --env qa --email True",
+    "notify-report:dev": "ts-node ./src/utils/notifications.ts --env dev --email True",
+    "notify-report:staging": "ts-node ./src/utils/notifications.ts --env staging --email True"
   }
 }

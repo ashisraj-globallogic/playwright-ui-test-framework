@@ -1,48 +1,47 @@
+import { BasePage } from '@pages';
 import { Page } from '@playwright/test';
-import { BasePage } from 'src/pages/BasePage';
 
 export class LoginPage extends BasePage {
   constructor(page: Page) {
     super(page);
   }
 
+  // Define page elements
   elements = {
-    // Define page elements
     actionElements: {
-      submitButton: () => this.page.getByRole('button', { name: 'Login' }),
+      submitButton: () => this.getByRole('button', { name: 'Login' }),
     },
 
     inputElements: {
-      userName: () => this.page.getByRole('textbox', { name: 'Username' }),
-      password: () => this.page.getByRole('textbox', { name: 'Password' }),
+      userName: () => this.getByRole('textbox', { name: 'Username' }),
+      password: () => this.getByRole('textbox', { name: 'Password' }),
     },
 
     visualElements: {
-      pageTitle: () => this.page.getByText('Swag Labs').waitFor({ state: 'visible' }),
+      pageTitle: () => this.getByText('Swag Labs'),
     },
   };
 
+  // Define page actions
   actions = {
-    // Define actions
     clickSubmitButton: async () => {
       const button = this.elements.actionElements.submitButton();
-      await button.waitFor({ state: 'visible' });
-      await button.click();
+      await this.click(button);
     },
 
     fillUserName: async (username: string) => {
-      const userNameField = this.elements.inputElements.userName();
-      await userNameField.fill(username);
+      const usernameField = this.elements.inputElements.userName();
+      await this.fill(usernameField, username);
     },
 
     fillPassword: async (password: string) => {
       const passwordField = this.elements.inputElements.password();
-      await passwordField.fill(password);
+      await this.fill(passwordField, password);
     },
   };
 
+  // Define page navigation
   navigation = {
-    // Define navigation
     goToLoginPage: async () => {
       await this.navigateTo('https://www.saucedemo.com/');
     },
@@ -51,4 +50,9 @@ export class LoginPage extends BasePage {
       await this.navigateTo('https://www.saucedemo.com/inventory.html');
     },
   };
+
+  async dispose(): Promise<void> {
+    // Add any cleanup logic here, e.g., closing popups, clearing storage, etc.
+    // If nothing is needed, you can leave this empty or log for debugging.
+  }
 }

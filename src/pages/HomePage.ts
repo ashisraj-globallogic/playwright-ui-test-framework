@@ -1,20 +1,39 @@
+import { BasePage } from '@pages';
 import { Page } from '@playwright/test';
-import { BasePage } from 'src/pages/BasePage';
 
 export class HomePage extends BasePage {
   constructor(page: Page) {
     super(page);
   }
 
-  // Click the "Get Started" link or button
-  async clickGetStarted(): Promise<void> {
-    const getStartedButton = this.page.getByRole('link', { name: 'Get started' });
+  // Define page elements
+  elements = {
+    actionElements: {
+      getStartedButton: () => this.getByRole('link', { name: 'Get started' }),
+    },
 
-    // Ensure the element is visible and enabled
-    await getStartedButton.waitFor({ state: 'visible' });
-    await getStartedButton.scrollIntoViewIfNeeded();
+    inputElements: {},
 
-    // Perform the click
-    await getStartedButton.click();
+    visualElements: {},
+  };
+
+  // Define page actions
+  actions = {
+    clickGetStarted: async () => {
+      const button = this.elements.actionElements.getStartedButton();
+      await this.click(button);
+    },
+  };
+
+  // Define page navigation
+  navigation = {
+    goToPWDevPage: async () => {
+      await this.navigateTo('https://playwright.dev/');
+    },
+  };
+
+  async dispose(): Promise<void> {
+    // Add any cleanup logic here, e.g., closing popups, clearing storage, etc.
+    // If nothing is needed, you can leave this empty or log for debugging.
   }
 }

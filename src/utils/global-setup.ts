@@ -25,19 +25,23 @@ async function globalSetup() {
 
   rimraf(`${allureResultPath}`);
 
+  // Setup cookies for users
+  await setUpUsersCookies();
+  logger.info(chalk.green('User cookies setup completed'));
+
   // Load secrets based on the environment
   // await loadSecrets();
   // logger.info('Secrets loaded successfully');
 }
 
-const users = [
-  {
-    userName: 'standard_user',
-    password: 'secret_sauce',
-  },
-];
+async function setUpUsersCookies() {
+  const users = [
+    {
+      userName: 'standard_user',
+      password: 'secret_sauce',
+    },
+  ];
 
-(async () => {
   const browser = await chromium.launch({
     channel: 'chrome',
     headless: true,
@@ -52,6 +56,7 @@ const users = [
     } else {
       const context = await browser.newContext();
       const page = await context.newPage();
+
       await page.goto('https://www.saucedemo.com/');
 
       await page.getByRole('textbox', { name: 'Username' }).fill('standard_user');
@@ -59,14 +64,13 @@ const users = [
 
       await page.getByRole('button', { name: 'Login' }).click();
 
-      // eslint-disable-next-line playwright/no-standalone-expect
       await expect(page.getByText('Products')).toBeVisible();
 
       await page.context().storageState({ path: storageStateFilePath });
       logger.info(`The storage state file has been created - ${storageStateFilePath}`);
     }
   }
-})();
+}
 
 // async function loadSecrets() {
 //   // Load secrets based on the environment

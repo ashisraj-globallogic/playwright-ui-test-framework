@@ -25,6 +25,13 @@ export default defineConfig([
 
   // TypeScript-specific rules
   tseslint.configs.recommended,
+  {
+    files: ['**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }], // Ignore unused variables prefixed with _
+      '@typescript-eslint/no-explicit-any': 'warn', // Allow explicit any type
+    },
+  },
 
   // JSON files
   {
@@ -66,7 +73,7 @@ export default defineConfig([
       'playwright/no-nested-step': 'error',
       'playwright/no-networkidle': 'error',
       'playwright/no-nth-methods': 'error',
-      'playwright/no-raw-locators': ['error', { allowed: ['iframe', "[aria-busy='false']"] }],
+      'playwright/no-raw-locators': ['warn', { allowed: ['iframe', "[aria-busy='false']"] }],
       'playwright/missing-playwright-await': ['error'],
       'playwright/valid-expect': 'error',
       'playwright/valid-title': 'error',
@@ -105,10 +112,10 @@ export default defineConfig([
       '**/openapitools.json',
       '**/executors.json',
       '.vscode/**',
-      'artifacts/*State.json',
       '**/utils/test-scenarios.json',
       '**/configs/executor.json',
-      '**/artifacts/*cookies.json',
+      '**/artifacts/**/*cookies.json',
+      '**/artifacts/reports/**',
     ],
   },
 ]);

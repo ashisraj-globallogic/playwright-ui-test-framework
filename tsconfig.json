@@ -14,7 +14,7 @@
       "@fixtures/*": ["src/fixtures/*"],
       "@utils/*": ["src/utils/*"],
       "@environments/*": ["src/environments/*"],
-      "@pages/*": ["src/pages/*"],
+      "@pages": ["src/pages/index.ts"],
       "@routes/*": ["src/routes/*"],
       "@scripts/*": ["src/scripts/*"]
     }

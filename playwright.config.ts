@@ -3,6 +3,7 @@ import logger from '@utils/logger';
 import os from 'os';
 import path from 'path';
 import { envConfig } from './src/configs/test-config';
+import { sendReportNotification } from './src/utils/notifications';
 
 // Do not remove this line, it is used to load environment variables
 logger.info('Environment Data:', envConfig); // Log all environment variables
@@ -34,27 +35,92 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+
+  metadata: {
+    hostname: os.hostname(), // Add hostname
+    user_id: os.userInfo().username, // Add user ID
+    os_platform: os.platform(),
+    os_release: os.release(),
+    os_version: os.version(),
+    os_name: os.type(),
+    node_version: process.version,
+    env: process.env.ENV || 'dev',
+    type: 'Regression',
+  },
+
   reporter: [
     // ['list'], // Use the list reporter for console output
     // ['html'], // Keep the default HTML reporter
     [
-      'allure-playwright',
+      'monocart-reporter',
       {
-        detail: true,
-        resultsDir: path.join(__dirname, 'artifacts', 'reports', 'allure-results'),
-        suiteTitle: true,
-        open: 'never',
-        environmentInfo: {
-          hostname: os.hostname(), // Add hostname
-          user_id: os.userInfo().username, // Add user ID
-          os_platform: os.platform(),
-          os_release: os.release(),
-          os_version: os.version(),
-          node_version: process.version,
+        name: 'NatWest-Functional UI Test Report',
+        outputFile: path.join(__dirname, 'artifacts', 'reports', 'monocart-report', 'index.html'),
+        // whether to copy attachments to the reporter output dir, defaults to true
+        copyAttachments: false,
+        // {boolean} Indicates whether to clean previous files in output dir before generating report. Defaults to true.
+        clean: true,
+        // connect previous report data for trend chart
+        trend: path.join(__dirname, 'artifacts', 'reports', 'monocart-report', 'index.json'),
+        onEnd: async (
+          reportData: {
+            name: string;
+            dateH: string;
+            htmlPath: string;
+            metadata: {
+              env: string;
+              hostname: string;
+              user_id: string;
+              os_name: string;
+              branch: string;
+              folderPath: string;
+              node_version: string;
+            };
+            durationH: string;
+            summaryTable: string;
+          },
+          helper: {
+            sendEmail: (arg0: {
+              transport: { service: string; auth: { user: string; pass: string } };
+              message: {
+                from: string;
+                to: string;
+                cc: string;
+                bcc: string;
+                subject: string;
+                attachments: { path: string }[];
+                html: string;
+              };
+            }) => Promise<any>;
+          },
+        ) => {
+          await sendReportNotification(reportData, helper);
         },
+        // zip: {
+        //   outputFile: `./artifacts/reports/monocart-report/monocart-report.zip`,
+        //   clean: true,
+        // },
       },
-    ], // Add Allure reporter
-    ['./src/configs/custom-reporter-config.ts'], // Add custom reporter
+    ],
+
+    // [
+    //   'allure-playwright',
+    //   {
+    //     detail: true,
+    //     resultsDir: path.join(__dirname, 'artifacts', 'reports', 'allure-results'),
+    //     suiteTitle: true,
+    //     open: 'never',
+    //     environmentInfo: {
+    //       hostname: os.hostname(), // Add hostname
+    //       user_id: os.userInfo().username, // Add user ID
+    //       os_platform: os.platform(),
+    //       os_release: os.release(),
+    //       os_version: os.version(),
+    //       node_version: process.version,
+    //     },
+    //   },
+    // ], // Add Allure reporter
+    // ['./src/configs/custom-reporter-config.ts'], // Add custom reporter
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
